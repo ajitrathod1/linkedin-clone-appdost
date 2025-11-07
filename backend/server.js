@@ -11,26 +11,37 @@ dotenv.config();
 const app = express();
 app.use(express.json());
 
-// ✅ Enable CORS (for frontend ports 5173 and 5174)
+// ✅ Enable CORS (Netlify + Local)
+const allowedOrigins = [
+  "http://localhost:5173", // local dev
+  "https://roaring-cajeta-c15d6f.netlify.app", // your live frontend
+];
+
 app.use(
   cors({
-    origin: [
-      "http://localhost:5173",
-      "https://roaring-cajeta-c15d6f.netlify.app" // ✅ Netlify live link
-    ],
+    origin: function (origin, callback) {
+      // Allow requests with no origin (like mobile apps, Postman)
+      if (!origin) return callback(null, true);
+      if (allowedOrigins.includes(origin)) {
+        return callback(null, true);
+      } else {
+        return callback(new Error("CORS not allowed from this origin"), false);
+      }
+    },
     methods: ["GET", "POST", "PUT", "DELETE"],
     credentials: true,
   })
 );
 
-
-// ✅ Import and use routes
+// ✅ Import routes
 const authRoutes = require("./routes/auth");
+
+// Use routes with prefix
 app.use("/api/auth", authRoutes);
 
-// ✅ Test route
+// ✅ Default test route
 app.get("/", (req, res) => {
-  res.send("✅ LinkedIn Clone Backend Running...");
+  res.send("✅ LinkedIn Clone Backend is running successfully on Render!");
 });
 
 // ✅ MongoDB Connection
@@ -44,7 +55,7 @@ mongoose
 
     // ✅ Start server
     const PORT = process.env.PORT || 5000;
-    app.listen(PORT, () => {
+    app.listen(PORT, "0.0.0.0", () => {
       console.log(`🚀 Server running on port ${PORT}`);
     });
   })
