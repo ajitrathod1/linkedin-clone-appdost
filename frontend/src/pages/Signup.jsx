@@ -1,6 +1,9 @@
+// src/components/Signup.jsx
 import React, { useState } from "react";
-import api from "../api";
+import axios from "axios";
 import { useNavigate } from "react-router-dom";
+
+const API_BASE = "https://linkedin-clone-appdost-m3go.onrender.com/api/auth";
 
 export default function Signup() {
   const [name, setName] = useState("");
@@ -10,12 +13,22 @@ export default function Signup() {
 
   const handleSignup = async (e) => {
     e.preventDefault();
+    if (!name || !email || !password) {
+      alert("❌ Please fill all fields");
+      return;
+    }
     try {
-      await api.post("/auth/signup", { name, email, password });
-      alert("✅ Account created successfully! Please login.");
-      navigate("/");
-    } catch {
-      alert("❌ Server error. Try again.");
+      const res = await axios.post(`${API_BASE}/signup`, { name, email, password }, { headers: { "Content-Type": "application/json" }});
+      if (res.status === 201 || res.status === 200) {
+        alert("✅ Account created successfully! Please login.");
+        navigate("/");
+      } else {
+        alert(res.data?.message || "Signup failed");
+      }
+    } catch (err) {
+      console.error("Signup error:", err);
+      const msg = err.response?.data?.message || err.message || "Server error";
+      alert("❌ " + msg);
     }
   };
 
@@ -23,27 +36,9 @@ export default function Signup() {
     <div className="login-page">
       <h2>Create your LinkedIn Clone Account</h2>
       <form onSubmit={handleSignup}>
-        <input
-          type="text"
-          placeholder="Full Name"
-          value={name}
-          onChange={(e) => setName(e.target.value)}
-          required
-        />
-        <input
-          type="email"
-          placeholder="Email address"
-          value={email}
-          onChange={(e) => setEmail(e.target.value)}
-          required
-        />
-        <input
-          type="password"
-          placeholder="Password (min 6 chars)"
-          value={password}
-          onChange={(e) => setPassword(e.target.value)}
-          required
-        />
+        <input type="text" placeholder="Full Name" value={name} onChange={(e) => setName(e.target.value)} required />
+        <input type="email" placeholder="Email address" value={email} onChange={(e) => setEmail(e.target.value)} required />
+        <input type="password" placeholder="Password (min 6 chars)" value={password} onChange={(e) => setPassword(e.target.value)} required />
         <button type="submit" className="btn-primary">Create Account</button>
       </form>
       <p>
