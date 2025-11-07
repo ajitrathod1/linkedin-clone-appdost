@@ -1,0 +1,472 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>LinkedIn Clone – Feed</title>
+  <link
+      rel="icon"
+      type="image/png"
+      href="https://static.licdn.com/scds/common/u/images/logos/favicons/v1/favicon.ico"
+    />
+  <style>
+    :root {
+      --bg: #f3f2ef;
+      --text: #000;
+      --card: #fff;
+      --primary: #0a66c2;
+    }
+    [data-theme="dark"] {
+      --bg: #0e1623;
+      --text: #f5f5f5;
+      --card: #1a2233;
+    }
+
+    body {
+      font-family: "Segoe UI", sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      margin: 0;
+      transition: 0.3s;
+    }
+
+    /* Navbar */
+    .navbar {
+      background: var(--card);
+      padding: 12px 24px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    }
+    .logo {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-weight: bold;
+      color: var(--primary);
+      font-size: 18px;
+    }
+    .nav-links {
+      display: flex;
+      align-items: center;
+      gap: 15px;
+    }
+    .nav-links a {
+      cursor: pointer;
+      font-weight: 500;
+      text-decoration: none;
+      color: var(--text);
+    }
+    .logout-btn {
+      background: var(--primary);
+      color: white;
+      border: none;
+      padding: 8px 14px;
+      border-radius: 6px;
+      cursor: pointer;
+    }
+
+    /* Layout */
+    .container {
+      display: grid;
+      grid-template-columns: 1fr 2fr 1fr;
+      gap: 20px;
+      padding: 20px 30px;
+    }
+
+    /* Sidebar */
+    .sidebar {
+      background: var(--card);
+      border-radius: 8px;
+      text-align: center;
+      padding-bottom: 10px;
+      box-shadow: 0 1px 4px rgba(0,0,0,0.1);
+    }
+    .cover {
+      height: 80px;
+      background: linear-gradient(90deg, var(--primary), #2b7bd3);
+      border-radius: 8px 8px 0 0;
+    }
+    .avatar-wrap {
+      position: relative;
+      top: -30px;
+      display: flex;
+      justify-content: center;
+    }
+    .avatar-wrap img {
+      width: 80px;
+      height: 80px;
+      border-radius: 50%;
+      border: 3px solid var(--card);
+      object-fit: cover;
+    }
+
+    /* Create post */
+    .create-post {
+      background: var(--card);
+      border-radius: 8px;
+      padding: 16px;
+      box-shadow: 0 1px 4px rgba(0,0,0,0.1);
+    }
+    textarea {
+      width: 100%;
+      height: 80px;
+      padding: 10px;
+      border-radius: 6px;
+      border: 1px solid #ccc;
+      resize: none;
+      background: transparent;
+      color: var(--text);
+    }
+    .post-options {
+      margin-top: 10px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    label {
+      background: #f0f0f0;
+      padding: 6px 10px;
+      border-radius: 5px;
+      cursor: pointer;
+      color: var(--primary);
+    }
+    .post-btn {
+      background: var(--primary);
+      color: white;
+      border: none;
+      border-radius: 6px;
+      padding: 8px 14px;
+      cursor: pointer;
+    }
+    .preview img, .preview video {
+      max-width: 100%;
+      border-radius: 8px;
+      margin-top: 10px;
+      display: block;
+    }
+
+    /* Feed */
+    .post {
+      background: var(--card);
+      border-radius: 8px;
+      padding: 16px;
+      margin-top: 20px;
+      box-shadow: 0 1px 4px rgba(0,0,0,0.1);
+    }
+    .post-header {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .post-header img {
+      width: 45px;
+      height: 45px;
+      border-radius: 50%;
+    }
+
+    .post-content {
+      margin-top: 10px;
+      white-space: pre-wrap;
+      line-height: 1.5;
+    }
+
+    .post-media {
+      margin-top: 12px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      flex-direction: column;
+    }
+    .post-media img,
+    .post-media video {
+      max-width: 100%;
+      max-height: 350px;
+      border-radius: 10px;
+      object-fit: contain;
+      background: #f9f9f9;
+    }
+
+    .post-actions {
+      display: flex;
+      justify-content: space-around;
+      margin-top: 10px;
+    }
+
+    .comment-section {
+      border-top: 1px solid #ccc;
+      margin-top: 10px;
+      padding-top: 8px;
+      display: none;
+    }
+
+    .dark-toggle {
+      background: transparent;
+      border: 1px solid #ccc;
+      padding: 6px 10px;
+      border-radius: 6px;
+      cursor: pointer;
+      color: var(--text);
+    }
+
+    footer {
+      text-align: center;
+      padding: 10px;
+      color: gray;
+    }
+
+    @media(max-width: 900px) {
+      .container { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+  <nav class="navbar">
+    <div class="logo">
+      <img src="https://static.licdn.com/sc/h/1bt1uwq5akv756knzdj4l6cdc" width="28" />
+      LinkedIn
+    </div>
+    <div class="nav-links">
+      <a>Home</a>
+      <a>My Network</a>
+      <a>Jobs</a>
+      <a>Messaging</a>
+      <a>Notifications</a>
+      <button class="dark-toggle" onclick="toggleTheme()">🌓</button>
+      <button class="logout-btn" onclick="logoutUser()">Logout</button>
+    </div>
+  </nav>
+
+  <div class="container">
+    <div class="sidebar">
+      <div class="cover"></div>
+      <div class="avatar-wrap">
+        <img src="https://cdn-icons-png.flaticon.com/512/3135/3135715.png" />
+      </div>
+      <h3 id="userName">User</h3>
+      <p id="userEmail">user@email.com</p>
+    </div>
+
+    <div>
+      <div class="create-post">
+        <textarea id="postText" placeholder="Share your thoughts..."></textarea>
+        <div class="post-options">
+          <label for="imageUpload">🖼️ Image</label>
+          <input type="file" id="imageUpload" accept="image/*" hidden />
+          <label for="videoUpload">🎥 Video</label>
+          <input type="file" id="videoUpload" accept="video/*" hidden />
+          <button class="post-btn" onclick="createPost()">Post</button>
+        </div>
+        <div class="preview" id="preview"></div>
+      </div>
+
+      <div id="feed"></div>
+    </div>
+
+    <div class="sidebar">
+      <h3>Trending Topics</h3>
+      <ul>
+        <li>#WebDevelopment</li>
+        <li>#AI</li>
+        <li>#CareerGrowth</li>
+      </ul>
+    </div>
+  </div>
+
+  <footer>LinkedIn Clone © 2025 • Built by Ajit Rathod</footer>
+
+  <script>
+    const user = JSON.parse(localStorage.getItem("user"));
+    if (!user) {
+      alert("Session expired, please login again.");
+      window.location.href = "index.html";
+    }
+    document.getElementById("userName").innerText = user.name;
+    document.getElementById("userEmail").innerText = user.email;
+
+    function toggleTheme() {
+      const current = document.documentElement.getAttribute("data-theme");
+      const next = current === "dark" ? "light" : "dark";
+      document.documentElement.setAttribute("data-theme", next);
+      localStorage.setItem("theme", next);
+    }
+    (function () {
+      const theme = localStorage.getItem("theme") || "light";
+      document.documentElement.setAttribute("data-theme", theme);
+    })();
+
+    let imageData = "", videoData = "";
+    const imageUpload = document.getElementById("imageUpload");
+    const videoUpload = document.getElementById("videoUpload");
+    const preview = document.getElementById("preview");
+
+    imageUpload.addEventListener("change", (e) => compressImage(e.target.files[0]));
+    videoUpload.addEventListener("change", (e) => {
+      const file = e.target.files[0];
+      if (!file) return;
+      const reader = new FileReader();
+      reader.onload = ev => {
+        videoData = ev.target.result;
+        preview.innerHTML = `<video src="${videoData}" controls></video>`;
+      };
+      reader.readAsDataURL(file);
+    });
+
+    function compressImage(file) {
+      if (!file) return;
+      const reader = new FileReader();
+      reader.onload = function (event) {
+        const img = new Image();
+        img.src = event.target.result;
+        img.onload = function () {
+          const canvas = document.createElement("canvas");
+          const MAX_WIDTH = 400;
+          const scaleSize = MAX_WIDTH / img.width;
+          canvas.width = MAX_WIDTH;
+          canvas.height = img.height * scaleSize;
+          const ctx = canvas.getContext("2d");
+          ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+          imageData = canvas.toDataURL("image/jpeg", 0.7);
+          preview.innerHTML = `<img src="${imageData}" />`;
+        };
+      };
+      reader.readAsDataURL(file);
+    }
+
+    let posts = JSON.parse(localStorage.getItem("posts")) || [];
+    const feed = document.getElementById("feed");
+
+    function savePosts() {
+      localStorage.setItem("posts", JSON.stringify(posts));
+    }
+
+    function renderPosts() {
+      feed.innerHTML = "";
+      posts.forEach((p, i) => {
+        const commentsHTML = p.comments.map(c => 
+          `<p><strong>${c.user}:</strong> ${c.text} <br><small>${c.time}</small></p>`
+        ).join("");
+        const media = (p.image || p.video)
+          ? `<div class="post-media">
+               ${p.image ? `<img src="${p.image}" />` : ""}
+               ${p.video ? `<video src="${p.video}" controls></video>` : ""}
+             </div>` : "";
+        
+        // 🧠 Only show edit/delete for post owner
+        const isOwner = p.email === user.email;
+        const ownerActions = isOwner ? `
+          <button onclick="editPost(this)">✏️ Edit</button>
+          <button onclick="deletePost(this)">🗑️ Delete</button>` : "";
+
+        const html = `
+          <div class="post" data-index="${i}">
+            <div class="post-header">
+              <img src="https://cdn-icons-png.flaticon.com/512/3135/3135715.png" />
+              <div><strong>${p.name}</strong><br>${p.email}<br><small>${p.timestamp}</small></div>
+            </div>
+            <div class="post-content">
+              <p>${p.text}</p>
+              ${media}
+            </div>
+            <div class="post-actions">
+              <button onclick="likePost(this)">👍 Like <span>${p.likes}</span></button>
+              <button onclick="toggleComments(this)">💬 Comments (${p.comments.length})</button>
+              <button onclick="sharePost()">🔁 Share</button>
+              ${ownerActions}
+            </div>
+            <div class="comment-section">
+              <div class="comments-list">${commentsHTML || "<i>No comments yet</i>"}</div>
+              <input type="text" placeholder="Write a comment..." />
+              <button onclick="addComment(this)">Post</button>
+            </div>
+          </div>`;
+        feed.insertAdjacentHTML("beforeend", html);
+      });
+    }
+
+    function createPost() {
+      const text = document.getElementById("postText").value.trim();
+      if (!text && !imageData && !videoData) return alert("Please add text, image, or video!");
+
+      const post = {
+        name: user.name,
+        email: user.email,
+        text,
+        image: imageData,
+        video: videoData,
+        likes: 0,
+        comments: [],
+        timestamp: new Date().toLocaleString()
+      };
+
+      posts.unshift(post); // newest top
+      savePosts();
+      renderPosts();
+      document.getElementById("postText").value = "";
+      imageData = videoData = "";
+      preview.innerHTML = "";
+    }
+
+    function likePost(btn) {
+      const i = btn.closest(".post").dataset.index;
+      posts[i].likes++;
+      savePosts();
+      renderPosts();
+    }
+
+    function toggleComments(btn) {
+      const sec = btn.closest(".post").querySelector(".comment-section");
+      sec.style.display = sec.style.display === "block" ? "none" : "block";
+    }
+
+    function addComment(btn) {
+      const postEl = btn.closest(".post");
+      const i = postEl.dataset.index;
+      const input = postEl.querySelector("input");
+      const val = input.value.trim();
+      if (!val) return;
+      posts[i].comments.push({ user: user.name, text: val, time: new Date().toLocaleString() });
+      savePosts();
+      renderPosts();
+    }
+
+    function editPost(btn) {
+      const i = btn.closest(".post").dataset.index;
+      const newText = prompt("Edit your post:", posts[i].text);
+      if (newText === null) return;
+      posts[i].text = newText;
+      savePosts();
+      renderPosts();
+    }
+
+    function deletePost(btn) {
+      const i = btn.closest(".post").dataset.index;
+      if (confirm("Delete this post?")) {
+        posts.splice(i, 1);
+        savePosts();
+        renderPosts();
+      }
+    }
+
+    function sharePost() {
+      alert("🔁 Post shared!");
+    }
+
+    function logoutUser() {
+  // Sirf user related cheezein remove karo, posts safe rahein
+  localStorage.removeItem("user");
+  localStorage.removeItem("token");
+
+  alert("👋 Logged out successfully!");
+  window.location.href = "index.html";
+}
+
+
+    renderPosts();
+  </script>
+</body>
+</html>

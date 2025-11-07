@@ -1,0 +1,116 @@
+import React, { useState } from "react";
+import { useNavigate } from "react-router-dom";
+import {
+  Home,
+  Users,
+  Briefcase,
+  MessageCircle,
+  Bell,
+  X,
+} from "lucide-react";
+import "./Navbar.css"; // animation ke liye optional CSS
+
+export default function Navbar({ setActivePage }) {
+  const [showMessages, setShowMessages] = useState(false);
+  const [showNotifications, setShowNotifications] = useState(false);
+  const navigate = useNavigate();
+
+  const logoutUser = () => {
+    localStorage.removeItem("token");
+    localStorage.removeItem("user");
+    alert("👋 Logged out successfully!");
+    navigate("/");
+  };
+
+  return (
+    <>
+      <nav className="flex justify-between items-center bg-white shadow-md p-4 sticky top-0 z-20">
+        <div
+          onClick={() => setActivePage("home")}
+          className="flex items-center gap-2 text-blue-600 font-bold text-lg cursor-pointer"
+        >
+          <img
+            src="https://static.licdn.com/sc/h/1bt1uwq5akv756knzdj4l6cdc"
+            alt="LinkedIn"
+            className="w-7 h-7"
+          />
+          <span>LinkedIn</span>
+        </div>
+
+        <div className="flex items-center gap-6">
+          <button
+            onClick={() => setActivePage("home")}
+            className="text-gray-700 hover:text-blue-600 flex items-center gap-1"
+          >
+            <Home size={18} /> Home
+          </button>
+
+          <button
+            onClick={() => setActivePage("network")}
+            className="text-gray-700 hover:text-blue-600 flex items-center gap-1"
+          >
+            <Users size={18} /> My Network
+          </button>
+
+          <button
+            onClick={() => setActivePage("jobs")}
+            className="text-gray-700 hover:text-blue-600 flex items-center gap-1"
+          >
+            <Briefcase size={18} /> Jobs
+          </button>
+
+          <button
+            onClick={() => setShowMessages(true)}
+            className="text-gray-700 hover:text-blue-600 flex items-center gap-1"
+          >
+            <MessageCircle size={18} /> Messaging
+          </button>
+
+          <button
+            onClick={() => setShowNotifications(!showNotifications)}
+            className="text-gray-700 hover:text-blue-600 flex items-center gap-1 relative"
+          >
+            <Bell size={18} /> Notifications
+          </button>
+
+          <button
+            onClick={logoutUser}
+            className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-md"
+          >
+            Logout
+          </button>
+        </div>
+      </nav>
+
+      {/* Right Slide Message Panel */}
+      {showMessages && (
+        <div className="message-panel animate-slide-in">
+          <div className="panel-header">
+            <h3>Messages</h3>
+            <X
+              className="cursor-pointer"
+              onClick={() => setShowMessages(false)}
+            />
+          </div>
+          <div className="messages-list">
+            <p><strong>Rohit Raj</strong>: Hey, welcome to AppDost team! 🎉</p>
+            <p><strong>Arjun</strong>: Bro, check out this new post!</p>
+            <p><strong>HR Bot</strong>: Your profile has been updated.</p>
+          </div>
+        </div>
+      )}
+
+      {/* Notification Popup */}
+      {showNotifications && (
+        <div className="notification-box animate-fade-in">
+          <h4>🔔 Notifications</h4>
+          <ul>
+            <li>✅ New connection: <strong>Arjun Kumar</strong></li>
+            <li>💬 New comment on your post</li>
+            <li>👀 Someone viewed your profile</li>
+          </ul>
+        </div>
+      )}
+    </>
+  );
+}
