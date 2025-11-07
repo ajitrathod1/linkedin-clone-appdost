@@ -1,20 +1,29 @@
-# LinkedClone (Mini LinkedIn Clone)
+# LinkedIn Clone - AppDost Internship Project
 
-Simple full-stack social feed app with signup/login, create post, and public feed.
+This project is a full-stack LinkedIn Clone built using **HTML, CSS, JS, Node.js, Express & MongoDB**.
 
-## Tech stack
-- Frontend: React (Vite)
-- Backend: Node.js + Express
-- Database: MongoDB (Atlas)
-- Auth: JWT, passwords hashed with bcrypt
+---
 
-## Run locally
+## 💻 Features
+- User Authentication (Signup/Login)
+- Create, Edit, Delete, and Like Posts
+- Add Comments & View Comments
+- Upload Text, Image, and Video Posts
+- Dark/Light Mode
+- Real-time Post Feed
+- Responsive UI (LinkedIn-like Design)
 
-### Backend
-1. Open terminal:
-```bash
-cd linkedclone/backend
-cp .env.example .env
-# edit .env and set MONGO_URI and JWT_SECRET
-npm install
-npm run dev
+---
+
+## 🧠 Tech Stack
+**Frontend:** HTML, CSS, JavaScript  
+**Backend:** Node.js, Express.js  
+**Database:** MongoDB  
+**Version Control:** Git & GitHub
+
+---
+
+## 🚀 How to Run
+1. Clone the repo:
+   ```bash
+   git clone https://github.com/ajitrathod1/linkedin-clone-appdost.git
